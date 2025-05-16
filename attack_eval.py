@@ -11,6 +11,24 @@ import torch.nn as nn
 import torchattacks
 import torch.nn.functional as F
 
+from autoattack import AutoAttack
+def eval_autoattack(model, testloader, epsilon=8/255.0, norm='Linf', attacks_to_run=None):
+    model.eval()
+    adversary = AutoAttack(model, norm=norm, eps=epsilon, version='standard', verbose=True)
+    if attacks_to_run is not None:
+        adversary.attacks_to_run = attacks_to_run  # e.g., ['apgd-ce', 'apgd-dlr', 'fab', 'square']
+
+    # 合并所有test data
+    xs, ys = [], []
+    for x, y in testloader:
+        xs.append(x)
+        ys.append(y)
+    x_test = torch.cat(xs, dim=0).cuda()
+    y_test = torch.cat(ys, dim=0).cuda()
+
+    with torch.no_grad():
+        adv_complete = adversary.run_standard_evaluation(x_test, y_test, bs=128)
+
 path = ""
 student = mobilenet_v2()# cifar10_resnet56()# wideresnet()##resnet18()#
 
@@ -80,8 +98,11 @@ def attack_cw_inf(model, input, target, confidence=50, num_classes=10, epsilon=8
     adversarial_input = input + perturbation
     adversarial_input = torch.clamp(adversarial_input, 0, 1) 
     return adversarial_input 
+logger.info("=============== AutoAttack Evaluation ===============")
+eval_autoattack(student, testloader, epsilon=8/255.0, norm='Linf')
 
 logger.info("============white box attack===================")
+
 torch.cuda.empty_cache()
 test_accs_naturals = []
 for step,(test_batch_data,test_batch_labels) in enumerate(testloader): #,index
