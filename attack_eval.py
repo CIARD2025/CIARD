@@ -18,7 +18,7 @@ def eval_autoattack(model, testloader, epsilon=8/255.0, norm='Linf', attacks_to_
     if attacks_to_run is not None:
         adversary.attacks_to_run = attacks_to_run  # e.g., ['apgd-ce', 'apgd-dlr', 'fab', 'square']
 
-    # 合并所有test data
+    
     xs, ys = [], []
     for x, y in testloader:
         xs.append(x)
