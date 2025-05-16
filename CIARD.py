@@ -239,7 +239,7 @@ for epoch in range(begin_epoch,epochs+1):
         coef = 1.0/(weight["adv_loss"] + weight["nat_loss"])
         weight["adv_loss"] *= coef
         weight["nat_loss"] *= coef
-        total_loss = weight["adv_loss"]*kl_Loss1 + weight["nat_loss"]*kl_Loss2
+        total_loss = 1 * kl_Loss1 + 1 *kl_Loss2 #weight["adv_loss"]*kl_Loss1 + weight["nat_loss"]*kl_Loss2 This is for ablation with Mtard,which is requeseted in Rebuttal stage
 
 
         kl_Loss3 = push_loss(nat_adv_logits,student_adv_logits,train_batch_labels) 
@@ -247,7 +247,7 @@ for epoch in range(begin_epoch,epochs+1):
             kl_Loss3 = torch.tensor(0.0)
         else:
             kl_Loss3 = torch.mean(kl_Loss3)
-            loss3_weight = scale_to_magnitude(float(kl_Loss1.item()), float(kl_Loss2.item()), float(kl_Loss3.item())) 
+            loss3_weight = scale_to_magnitude(float(kl_Loss1.item()), float(kl_Loss2.item()), float(kl_Loss3.item())) #This is fit the loss3 into the same scale with others,this is not lambda,lambda here is 1
             total_loss -= loss3_weight*kl_Loss3
         '''
         kl_Loss4 = push_loss(adv_teacher_nat,student_nat_logits,train_batch_labels) 
