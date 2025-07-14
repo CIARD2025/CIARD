@@ -1,4 +1,5 @@
 # CIARD  
+# WE HAVE BEEN ACCEPTED AT ICCV2025!cheeeeeeeeeeers! soon we will upload more detailed and polished codes and more ckpts!
 **CIARD: Enhancing Accuracy and Robustness of Student Models through Cyclic Iterative Distillation**
 
 ## Instructions for Reproducing Results
